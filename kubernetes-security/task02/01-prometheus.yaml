@@ -12,25 +12,23 @@ metadata:
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: Role
+kind: ClusterRole
 metadata:
   name: prom-admin
-  namespace: prometheus
 rules:
   - apiGroups: [""]
     resources: ["pods", "nodes"]
     verbs: ["get", "watch", "list"]
 
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
 metadata:
   name: prom-rbac
-  namespace: prometheus
 subjects:
   - kind: ServiceAccount
     name: carol
-    namespace: prometheus
+    namespace: default
 roleRef:
   kind: ClusterRole
   name: prom-admin
