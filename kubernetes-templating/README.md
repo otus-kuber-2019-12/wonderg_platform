@@ -14,7 +14,7 @@ helm upgrade --install cert-manager jetstack/cert-manager --wait --namespace=cer
 
 # Добавил ClusterIssuer
 
-kubectl apply -f cert-manager/cluster-issuer.yaml -n cert-manager
+kubectl apply -f kubernetes-templating/cert-manager/cluster-issuer-prod.yaml -n cert-manager
 
 # Задиплоил Chart museum
 
@@ -23,6 +23,30 @@ helm upgrade --install chartmuseum stable/chartmuseum --wait --namespace=chartmu
 
 # Verification
 
-export INGRESS_EIP=$(kubectl get svc nginx-ingress-controller -n nginx-ingress -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'
+export INGRESS_EIP=$(kubectl get svc nginx-ingress-controller -n nginx-ingress -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
 curl https://chartmuseum.$INGRESS_EIP.nip.io
 Должно вернуть Chartmuseum welcome page
+
+# Задание со \*
+
+Опишите в PR последовательность действий, необходимых для добавления туда helm chart's и их установки с использованием chartmuseum как репозитория
+
+# Диплоймент Harbor
+
+kubectl create ns harbor
+helm repo add harbor https://helm.goharbor.io
+helm upgrade --install harbor harbor/harbor --wait --namespace=harbor --version=1.1.2 -f kubernetes-templating/harbor/values.yaml
+
+# Свой helm chart
+
+kubectl create ns hipster-shop
+helm upgrade --install hipster-shop kubernetes-templating/hipster-shop --namespace hipster-shop
+
+# Uninstall
+
+helm uninstall hipster-shop
+
+# Диплоймент фронта отдельно
+
+helm upgrade --install hipster-shop kubernetes-templating/hipster-shop --namespace hipster-shop
+helm upgrade --install hipster-shop-frontend kubernetes-templating/frontend/ --namespace hipster-shop
