@@ -12,6 +12,7 @@ Thumbs.db
 ######################
 *.log
 # Artifacts #
+.terraform
 
 # Working files #
 notes
