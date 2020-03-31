@@ -6,13 +6,15 @@ resource "google_container_cluster" "kubernetes" {
   name               = "otus-k8s-cluster"
   location           = "europe-north1"
   min_master_version = "1.15.9-gke.26"
+  monitoring_service = "none"
+  logging_service    = "none"
+
   node_locations = [
     "europe-north1-a",
   ]
 
   remove_default_node_pool = true
   initial_node_count       = 1
-
 
   master_auth {
     username = ""
@@ -34,7 +36,7 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
 
   node_config {
     preemptible  = true
-    machine_type = "n1-standard-4"
+    machine_type = "n1-standard-2"
 
     metadata = {
       disable-legacy-endpoints = "true"
@@ -42,9 +44,7 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
 
     oauth_scopes = [
       "https://www.googleapis.com/auth/devstorage.read_only",
-      "https://www.googleapis.com/auth/monitoring.write",
-      "https://www.googleapis.com/auth/logging.write",
-      "https://www.googleapis.com/auth/monitoring"
+      "https://www.googleapis.com/auth/monitoring.write"
     ]
   }
 }
